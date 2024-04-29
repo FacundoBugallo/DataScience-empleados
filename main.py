@@ -90,3 +90,75 @@ dfcol = df.columns.copy()
 
 
 df.to_csv('datanew.csv', columns=dfcol, index=False)
+#Generacion de insights
+
+# Cuantificacion el problema para la comparacion, resumen de info, indentificar patrones
+# para los modelos de ML y toma de decisiones
+# ¿Cual es la taza de abandono?
+
+df.abandono.value_counts(normalize=True)*100
+# nos da el porcentaje sore el total  
+# El *100 simplemente se utiliza para convertir el resultado de porcentajes fraccionarios
+
+#rota un 16% del personal de la empreza
+
+#¿Hay un perfil de empleado que deja la empreza?
+
+df['abandono'] = df.abandono.map({'No':0, 'Yes':1})
+#   Convertimos a numerica
+# Analisis por penetracion
+# Educacion
+temp = df.groupby('educacion').abandono.mean().sort_values(ascending=False)*100
+# la media de una vartiable 0 1 es igual que el porcentaje
+temp.plot.bar()
+# la taza de abandono de nivel primaria es del 32%
+# la taza de abandono de nivel master es del 8%
+
+temp = df.groupby('estado_civil').abandono.mean().sort_values(ascending=False)*100
+temp.plot.bar()
+# los casados y divorciados se mantienen en el mismo rango 10% - 12%
+# los que estan solos es del 25%
+
+temp = df.groupby('horas_extra').abandono.mean().sort_values(ascending=False)*100
+temp.plot.bar()
+#los empleados con horas extra tienen mas tendencia a dejar el oficio
+
+temp = df.groupby('puesto').abandono.mean().sort_values(ascending=False)*100
+temp.plot.bar()
+#el 40% de las SalesRepresentative abandono el oficio
+
+temp = df.groupby('abandono').salario_mes.mean()
+temp.plot.bar()
+
+#los empleados con sueldo menores tiende a salir de la empreza
+    
+# Concluciones 
+# - El perfil del que deja la empresa
+# - Bajo nivel educativo
+# - Soltero
+# - Trabaja en ventas
+# - Bajo salario
+# - Alta carga de horas extras
+# Estas concluciones y datos de los empleados le podra servir alos de Recursos humanos
+
+
+# ¿Cual es el impacto económico de este problema?
+# el estudio 'Cost of Turnover" del Center for American Progress:
+
+# El coste de la fuga de los empleados que ganan menos de es del 16.1 % de su salario
+# El coste de la fuga de los empleados que ganan entre 30000-50000 es del 19,7% de su salario
+# El coste de la fuga de los empleados que ganan entre es del de su salario
+# El coste de la fuga de los empleados que ganan más de 75000 es del 21 de su salario
+
+#Crearemos la variable anual ya que la que tenemos es mensual
+df['salario_ano'] = df.salario_mes.transform(lambda x: x*12 )
+df[['salario_mes', 'salario_ano']]
+
+condiciones = [(df['salario_ano'] <= 30000), 
+               (df['salario_ano'] > 30000) & (df['salario_ano'] <=50000),
+               (df['salario_ano'] > 50000) & (df['salario_ano'] <=75000),
+               (df['salario_ano'] > 75000)]
+
+#Lista de resultados.
+resultados = [df.salario_ano*0.161, df.salario_ano*0.197, df.salario_ano*0.204, df.salario_ano*0.21]
+df['impacto_abandono'] = np.select(condiciones  , resultados, default=-999)
