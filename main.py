@@ -162,3 +162,45 @@ condiciones = [(df['salario_ano'] <= 30000),
 #Lista de resultados.
 resultados = [df.salario_ano*0.161, df.salario_ano*0.197, df.salario_ano*0.204, df.salario_ano*0.21]
 df['impacto_abandono'] = np.select(condiciones  , resultados, default=-999)
+df
+
+#cuanto costo el problema este año
+coste_total = df.loc[df.abandono == 1].impacto_abandono.sum()
+coste_total
+
+#empleados no motivados cuestan:
+df.loc[(df.abandono==1) & (df.implicacion=='Baja')].impacto_abandono.sum()
+
+
+#cuntanto dinero se podria ahorrar fidelizando a nuestro empleados
+print("Reducir un 10% la fuga de empleados nos ahorra",
+      (coste_total*0.1), "$ cada año")
+print("Reducir un 20% la fuga de empleados nos ahorra",
+      (coste_total*0.2), "$ cada año")
+print("Reducir un 30% la fuga de empleados nos ahorra",
+      (coste_total*0.3), "$ cada año")
+
+#Habíamos Visto que los representantes de ventas son el puesto que más se van. ¿Tendría sentido hacer un plan para ellos? ¿Cual
+#sería el coste ahorrado si disminuimos la fuga un 30%?
+#Primero vamos a calcular el % de representantes de ventas que se ha ido el año pasado
+
+total_repre_pasado = len(df.loc[df.puesto == 'Sales Representative'])
+abandonos_repre_pasado = len(df.loc[(df.puesto == 'Sales Representative') & (df.abandono==1)])
+porc_pasado = abandonos_repre_pasado/total_repre_pasado 
+porc_pasado
+    #el 40% de Sales Representative se fue de la empreza
+# estimacion este año
+
+total_repre_actual = len(df.loc[(df.puesto=='Sales Representative') & (df.abandono == 0)])
+se_ira = int(total_repre_actual * porc_pasado)
+# 19 empleados posiblemente se valla de la empreza  
+
+#Sobre ellos cuantos podemos retener (hipótesis 30%) y cuanto dinero puede suponer
+retenemos = int(se_ira * 0.3)
+ahorramos = df.loc[(df.puesto=='Sales Representative') & (df.abandono==0),'impacto_abandono'].sum()*0.3
+
+print('Podemos retener', retenemos, 'representantes de ventas y ello supondra ahorrar', ahorramos, '$')
+
+# Este dato también es muy interesante ;nrque nos permite determinar el presupuesto para acciones de retención por departamento o perfil.
+# Ya que sabemos que podemos gastarnos hasta 37 sólo en acciones especificas para retener a representantes de ventas y se estarían
+# pagando sólas con la pérdida evitada
