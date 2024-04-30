@@ -4,8 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Carga de datos
-df = pd.read_csv('C:\\Users\\ThisFacu\\PycharmProjects\\DataScience-empleados\\ProblemaEmpleados\\empleados.csv',
-                 sep=';', index_col='id', na_values='#N/D')
+
+df = pd.read_csv(r'C:\Users\ThisFacu\SetUp\Business-Analytics\DataScience-empleados\ProblemaEmpleados\empleados.csv', sep=';', index_col='id', na_values='#N/D')
 
 # Business analytics
 df
@@ -78,33 +78,28 @@ def estadisticos_cont(num):
 
 
 estadisticos_cont(df.select_dtypes('number'))
-# Visto en grafica 
+# Visto en grafica
 # Empleado tiene un valor:Eliminar
 # sexo tiene 4 valores, a cortos rasgos es raro que tenga mas 2 de sexos aqsi que seran eliminados
 # horas un solo valor lo borro
 df.drop(columns=['empleados', 'sexo', 'horas_quincena'], inplace=True)
 
 df.info()
-#guardo las columnas
-dfcol = df.columns.copy()
-
-
-df.to_csv('datanew.csv', columns=dfcol, index=False)
-#Generacion de insights
+# Generacion de insights
 
 # Cuantificacion el problema para la comparacion, resumen de info, indentificar patrones
 # para los modelos de ML y toma de decisiones
 # ¿Cual es la taza de abandono?
 
 df.abandono.value_counts(normalize=True)*100
-# nos da el porcentaje sore el total  
+# nos da el porcentaje sore el total
 # El *100 simplemente se utiliza para convertir el resultado de porcentajes fraccionarios
 
-#rota un 16% del personal de la empreza
+# rota un 16% del personal de la empreza
 
-#¿Hay un perfil de empleado que deja la empreza?
+# ¿Hay un perfil de empleado que deja la empreza?
 
-df['abandono'] = df.abandono.map({'No':0, 'Yes':1})
+df['abandono'] = df.abandono.map({'No': 0, 'Yes': 1})
 #   Convertimos a numerica
 # Analisis por penetracion
 # Educacion
@@ -121,18 +116,18 @@ temp.plot.bar()
 
 temp = df.groupby('horas_extra').abandono.mean().sort_values(ascending=False)*100
 temp.plot.bar()
-#los empleados con horas extra tienen mas tendencia a dejar el oficio
+# los empleados con horas extra tienen mas tendencia a dejar el oficio
 
 temp = df.groupby('puesto').abandono.mean().sort_values(ascending=False)*100
 temp.plot.bar()
-#el 40% de las SalesRepresentative abandono el oficio
+# el 40% de las SalesRepresentative abandono el oficio
 
 temp = df.groupby('abandono').salario_mes.mean()
 temp.plot.bar()
 
-#los empleados con sueldo menores tiende a salir de la empreza
-    
-# Concluciones 
+# los empleados con sueldo menores tiende a salir de la empreza
+
+# Concluciones
 # - El perfil del que deja la empresa
 # - Bajo nivel educativo
 # - Soltero
@@ -150,29 +145,30 @@ temp.plot.bar()
 # El coste de la fuga de los empleados que ganan entre es del de su salario
 # El coste de la fuga de los empleados que ganan más de 75000 es del 21 de su salario
 
-#Crearemos la variable anual ya que la que tenemos es mensual
-df['salario_ano'] = df.salario_mes.transform(lambda x: x*12 )
+# Crearemos la variable anual ya que la que tenemos es mensual
+df['salario_ano'] = df.salario_mes.transform(lambda x: x*12)
 df[['salario_mes', 'salario_ano']]
 
-condiciones = [(df['salario_ano'] <= 30000), 
-               (df['salario_ano'] > 30000) & (df['salario_ano'] <=50000),
-               (df['salario_ano'] > 50000) & (df['salario_ano'] <=75000),
+condiciones = [(df['salario_ano'] <= 30000),
+               (df['salario_ano'] > 30000) & (df['salario_ano'] <= 50000),
+               (df['salario_ano'] > 50000) & (df['salario_ano'] <= 75000),
                (df['salario_ano'] > 75000)]
 
-#Lista de resultados.
-resultados = [df.salario_ano*0.161, df.salario_ano*0.197, df.salario_ano*0.204, df.salario_ano*0.21]
-df['impacto_abandono'] = np.select(condiciones  , resultados, default=-999)
+# Lista de resultados.
+resultados = [df.salario_ano*0.161, df.salario_ano *
+              0.197, df.salario_ano*0.204, df.salario_ano*0.21]
+df['impacto_abandono'] = np.select(condiciones, resultados, default=-999)
 df
 
-#cuanto costo el problema este año
+# cuanto costo el problema este año
 coste_total = df.loc[df.abandono == 1].impacto_abandono.sum()
 coste_total
 
-#empleados no motivados cuestan:
-df.loc[(df.abandono==1) & (df.implicacion=='Baja')].impacto_abandono.sum()
+# empleados no motivados cuestan:
+df.loc[(df.abandono == 1) & (df.implicacion == 'Baja')].impacto_abandono.sum()
 
 
-#cuntanto dinero se podria ahorrar fidelizando a nuestro empleados
+# cuntanto dinero se podria ahorrar fidelizando a nuestro empleados
 print("Reducir un 10% la fuga de empleados nos ahorra",
       (coste_total*0.1), "$ cada año")
 print("Reducir un 20% la fuga de empleados nos ahorra",
@@ -180,27 +176,49 @@ print("Reducir un 20% la fuga de empleados nos ahorra",
 print("Reducir un 30% la fuga de empleados nos ahorra",
       (coste_total*0.3), "$ cada año")
 
-#Habíamos Visto que los representantes de ventas son el puesto que más se van. ¿Tendría sentido hacer un plan para ellos? ¿Cual
-#sería el coste ahorrado si disminuimos la fuga un 30%?
-#Primero vamos a calcular el % de representantes de ventas que se ha ido el año pasado
+# Habíamos Visto que los representantes de ventas son el puesto que más se van. ¿Tendría sentido hacer un plan para ellos? ¿Cual
+# sería el coste ahorrado si disminuimos la fuga un 30%?
+# Primero vamos a calcular el % de representantes de ventas que se ha ido el año pasado
 
 total_repre_pasado = len(df.loc[df.puesto == 'Sales Representative'])
-abandonos_repre_pasado = len(df.loc[(df.puesto == 'Sales Representative') & (df.abandono==1)])
-porc_pasado = abandonos_repre_pasado/total_repre_pasado 
+abandonos_repre_pasado = len(
+    df.loc[(df.puesto == 'Sales Representative') & (df.abandono == 1)])
+porc_pasado = abandonos_repre_pasado/total_repre_pasado
 porc_pasado
-    #el 40% de Sales Representative se fue de la empreza
+# el 40% de Sales Representative se fue de la empreza
 # estimacion este año
 
-total_repre_actual = len(df.loc[(df.puesto=='Sales Representative') & (df.abandono == 0)])
+total_repre_actual = len(
+    df.loc[(df.puesto == 'Sales Representative') & (df.abandono == 0)])
 se_ira = int(total_repre_actual * porc_pasado)
-# 19 empleados posiblemente se valla de la empreza  
+# 19 empleados posiblemente se valla de la empreza
 
-#Sobre ellos cuantos podemos retener (hipótesis 30%) y cuanto dinero puede suponer
+# Sobre ellos cuantos podemos retener (hipótesis 30%) y cuanto dinero puede suponer
 retenemos = int(se_ira * 0.3)
-ahorramos = df.loc[(df.puesto=='Sales Representative') & (df.abandono==0),'impacto_abandono'].sum()*0.3
+ahorramos = df.loc[(df.puesto == 'Sales Representative') & (
+    df.abandono == 0), 'impacto_abandono'].sum()*0.3
 
-print('Podemos retener', retenemos, 'representantes de ventas y ello supondra ahorrar', ahorramos, '$')
+print('Podemos retener', retenemos,
+      'representantes de ventas y ello supondra ahorrar', ahorramos, '$')
 
 # Este dato también es muy interesante ;nrque nos permite determinar el presupuesto para acciones de retención por departamento o perfil.
 # Ya que sabemos que podemos gastarnos hasta 37 sólo en acciones especificas para retener a representantes de ventas y se estarían
 # pagando sólas con la pérdida evitada
+
+
+# guardo las columnas
+dfcol = df.columns.copy()
+df.to_csv('BusinessAnalytic.csv', columns=dfcol, index=False)
+
+
+#-----Machine-Learning--------
+
+df_ml = df.copy() 
+
+df_ml.info()
+
+#preparaciond de dato para la modelacion 
+
+from sklearn.preprocessing import OneHotEncoder
+
+
