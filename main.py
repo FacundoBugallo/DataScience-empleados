@@ -218,7 +218,49 @@ df_ml = df.copy()
 df_ml.info()
 
 #preparaciond de dato para la modelacion 
+#   Transformar las variables categoricas a numericas.
 
 from sklearn.preprocessing import OneHotEncoder
+
+#Categoricas
+
+cat = df_ml.select_dtypes('O')
+
+#Istanciamos
+
+ohe = OneHotEncoder(sparse_output=False)
+
+#Entrenamos 
+
+ohe.fit(cat)
+
+#Aplicamos
+
+cat_ohe = ohe.transform(cat)
+
+#Ponemos los nombres
+
+cat_ohe = pd.DataFrame(cat_ohe, columns=ohe.get_feature_names_out(input_features = cat.columns)).reset_index(drop=True)
+cat_ohe.info()
+
+#Seleccionamos las variables y las juntamos
+
+num = df.select_dtypes('number').reset_index(drop=True)
+df_ml = pd.concat([cat_ohe,num],axis=True)
+
+
+#Separador predictorias y target
+
+x = df_ml.drop(columns='abandono')
+y = df_ml['abandono']
+
+#Separacion de Train y Test
+
+from sklearn.model_selection import train_test_split
+
+train_x, test_x, train_y, test_y = train_test_split(x, y, test_size=0.3)#70/30
+
+
+
 
 
