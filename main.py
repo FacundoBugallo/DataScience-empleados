@@ -1,8 +1,9 @@
 # Setup
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.metrics import roc_auc_score
+from openpyxl import Workbook
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -296,3 +297,26 @@ pred[:5]
 roc_auc_score(test_y, pred)
 
 # entrenamos y validamos el modelos ML
+
+# --- Como interpretar los datos
+# diagrama del arbol
+plt.figure(figsize=(50, 50))
+plot_tree(ac,
+          feature_names=test_x.columns,
+          impurity=False,
+          node_ids=True,
+          proportion=True,
+          rounded=True,
+          precision=2)
+# importancia de las variables
+pd.Series(ac.feature_importances_, index=test_x.columns).sort_values(
+    ascending=False).plot(kind='bar', figsize=(30, 20))
+
+# Viendo esa detectamos muchas variables que no son inporantes
+# podemos ponerle el foco a las variables que mas resaltan
+# ya nos permiten seguir trabajando
+
+# ---Explotacion
+# incorporar el scoring  al dataframe inicial
+df['scoring_abandono'] = ac.predict_proba(df_ml.drop(columns='abandono'))[:, 1]
+df.to_excel('Abandono&Economico.xlsx')
