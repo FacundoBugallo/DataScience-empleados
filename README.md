@@ -3,18 +3,18 @@
 Este proyecto de Business Analytics se centra en el análisis de datos de empleados para identificar patrones de abandono y su impacto económico en una empresa. Se utiliza un conjunto de datos proporcionado en formato CSV que contiene información sobre los empleados, como su edad, nivel educativo, salario, satisfacción laboral, entre otros.
 
 ## Objetivos del Proyecto
-Análisis Exploratorio de Datos (EDA):
-Explorar la estructura y distribución de los datos.
-Identificar valores faltantes y manejarlos adecuadamente.
-Visualizar las relaciones entre las variables mediante gráficos y análisis estadísticos.
+ - Análisis Exploratorio de Datos (EDA):
+ - Explorar la estructura y distribución de los datos.
+ - Identificar valores faltantes y manejarlos adecuadamente.
+ - Visualizar las relaciones entre las variables mediante gráficos y análisis estadísticos.
 
 Identificación de Patrones de Abandono:
-Analizar las características de los empleados que tienden a abandonar la empresa.
-Evaluar el impacto económico del abandono de empleados en términos de costos para la empresa.
+ - Analizar las características de los empleados que tienden a abandonar la empresa.
+ - Evaluar el impacto económico del abandono de empleados en términos de costos para la empresa.
 
 Desarrollo de Modelos de Machine Learning:
-Entrenar modelos de clasificación para predecir el abandono de empleados.
-Evaluar el rendimiento de los modelos y seleccionar el mejor modelo para su implementación.
+ - Entrenar modelos de clasificación para predecir el abandono de empleados.
+ - Evaluar el rendimiento de los modelos y seleccionar el mejor modelo para su implementación.
 
 ## Contenido del Repositorio
 empleados.csv: Conjunto de datos de empleados en formato CSV.
