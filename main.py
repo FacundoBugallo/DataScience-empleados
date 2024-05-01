@@ -76,7 +76,6 @@ df['implicacion'] = df['implicacion'].fillna('Alta')
 def estadisticos_cont(num):
     # Calculamos describe
     estadisticos = num.describe().T
-    print(estadisticos)
     # Añadimos a la median
     estadisticos['median'] = num.median()
     # Reordeno
@@ -98,7 +97,6 @@ df.info()
 # para los modelos de ML y toma de decisiones
 # ¿Cual es la taza de abandono?
 
-df.abandono.value_counts(normalize=True) * 100
 # nos da el porcentaje sore el total
 # El *100 simplemente se utiliza para convertir el resultado de porcentajes fraccionarios
 

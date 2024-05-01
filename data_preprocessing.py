@@ -31,10 +31,7 @@ def graficos_eda_categoricos(cat):
         ax[cada].tick_params(labelsize=6)
 
 
-graficos_eda_categoricos(df.select_dtypes('O'))
-
-
-def estadisticos_cont(num):
+def estadisticos_eda_cont(num):
     # Calculamos describe
     estadisticos = num.describe().T
     print(estadisticos)
@@ -45,10 +42,7 @@ def estadisticos_cont(num):
     return estadisticos
 
 
-estadisticos_cont(df.select_dtypes('number'))
-
-
-def explorer_data(df):
+def explorer_data_(df):
     # Histograma y boxplot para salario_mes
     plt.figure(figsize=(10, 5))
     plt.subplot(1, 2, 1)
@@ -74,8 +68,8 @@ def explorer_data(df):
     plt.title('Matriz de correlación')
     plt.colorbar()
     plt.show()
-    valorfaltante(correlation_matrix)
     correlation_matrix.info()
+
     # Gráfico de dispersión para edad y salario_mes
     plt.figure(figsize=(8, 6))
     plt.scatter(df['edad'], df['salario_mes'])
@@ -92,30 +86,25 @@ def explorer_data(df):
     plt.ylabel('Frecuencia')
     plt.show()
 
+    # Abandonos
+    df.abandono.value_counts(normalize=True) * 100
     return df
-
-
-explorer_data(df)
 
 
 def clean_data(df):
     df.drop(columns=['anos_en_puesto', 'conciliacion',
-            'mayor_edad'], inplace=True)
+            'mayor_edad', 'empleados', 'sexo', 'horas_quincena'], inplace=True)
     return df
-
-
-clean_data(df)
 
 
 def imputar(df):
     df['educacion'] = df['educacion'].fillna('Universitaria')
     df['satisfaccion_trabajo'] = df['satisfaccion_trabajo'].fillna('Alta')
     df['implicacion'] = df['implicacion'].fillna('Alta')
+    df['abandono'] = df.abandono.map({'No': 0, 'Yes': 1})
 
 
-imputar(df)
-
-# Crear un mapa de calor para visualizar los valores faltantes
+# Mapa de calor para visualizar los valores faltantes
 
 
 def valorfaltante(df):
@@ -123,3 +112,23 @@ def valorfaltante(df):
     sns.heatmap(df.isnull(), cbar=False, cmap='viridis')
     plt.title('Valores faltantes en el DataFrame')
     plt.show()
+
+
+# Generacion de insights
+# ¿Cual es la taza de abandono?
+# rota un 16% del personal de la empreza
+
+
+# Cuantificacion el problema para la comparacion,
+# resumen de info, indentificar patrones
+# para los modelos de ML y toma de decisiones
+
+# ¿Hay un perfil de empleado que deja la empreza?
+
+
+clean_data(df)
+imputar(df)
+graficos_eda_categoricos(df.select_dtypes('O'))
+estadisticos_eda_cont(df.select_dtypes('number'))
+
+explorer_data_(df)
