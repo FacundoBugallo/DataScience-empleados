@@ -1,8 +1,8 @@
 
-Business Analytics - Análisis de Empleados
+#Business Analytics - Análisis de Empleados
 Este proyecto de Business Analytics se centra en el análisis de datos de empleados para identificar patrones de abandono y su impacto económico en una empresa. Se utiliza un conjunto de datos proporcionado en formato CSV que contiene información sobre los empleados, como su edad, nivel educativo, salario, satisfacción laboral, entre otros.
 
-Objetivos del Proyecto
+##Objetivos del Proyecto
 Análisis Exploratorio de Datos (EDA):
 Explorar la estructura y distribución de los datos.
 Identificar valores faltantes y manejarlos adecuadamente.
