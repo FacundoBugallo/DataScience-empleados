@@ -1,6 +1,7 @@
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def load_data(file_path):
@@ -80,7 +81,7 @@ def explorer_data_(df):
 
     # Gráfico de barras apiladas para departamento y abandono
     pd.crosstab(df['departamento'], df['abandono']
-                ).plot(kind='bar', stacked=True)
+                ).plot(kind='bar', stacked=False)
     plt.title('Distribución de abandono por departamento')
     plt.xlabel('Departamento')
     plt.ylabel('Frecuencia')
@@ -88,6 +89,19 @@ def explorer_data_(df):
 
     # Abandonos
     df.abandono.value_counts(normalize=True) * 100
+
+    temp = df.groupby('estado_civil').abandono.mean(
+    ).sort_values(ascending=False) * 100
+    temp.plot.bar()
+
+    temp = df.groupby('horas_extra').abandono.mean(
+    ).sort_values(ascending=False) * 100
+    temp.plot.bar()
+
+    temp = df.groupby('abandono').salario_mes.mean(
+    ).sort_values(ascending=False)
+    temp.plot.bar()
+
     return df
 
 
@@ -113,22 +127,57 @@ def valorfaltante(df):
     plt.title('Valores faltantes en el DataFrame')
     plt.show()
 
+# Conclucioness
+# - El perfil del que deja la empresa
+# - Bajo nivel educativo
+# - Soltero
+# - Trabaja en ventas
+# - Bajo salario
+# - Alta carga de horas extras
+# Estas concluciones y datos de los empleados le podra servir alos de Recursos humanos
 
-# Generacion de insights
-# ¿Cual es la taza de abandono?
-# rota un 16% del personal de la empreza
+
+# ¿Cual es el impacto económico de este problema?
+# el estudio 'Cost of Turnover" del Center for American Progress:
+
+# El coste de la fuga de los empleados que ganan menos de es del 16.1 % de su salario
+# El coste de la fuga de los empleados que ganan entre 30000-50000 es del 19,7% de su salario
+# El coste de la fuga de los empleados que ganan entre es del de su salario
+# El coste de la fuga de los empleados que ganan más de 75000 es del 21 de su salario
+
+# Crearemos la variable anual ya que la que tenemos es mensual
+df['salario_ano'] = df.salario_mes.transform(lambda x: x * 12)
+df[['salario_mes', 'salario_ano']]
+
+condiciones = [(df['salario_ano'] <= 30000),
+               (df['salario_ano'] > 30000) & (df['salario_ano'] <= 50000),
+               (df['salario_ano'] > 50000) & (df['salario_ano'] <= 75000),
+               (df['salario_ano'] > 75000)]
 
 
-# Cuantificacion el problema para la comparacion,
-# resumen de info, indentificar patrones
-# para los modelos de ML y toma de decisiones
+def impacto_abandono_(df):
+    # Lista de resultados.
+    resultados = [df.salario_ano * 0.161, df.salario_ano *
+                  0.197, df.salario_ano * 0.204, df.salario_ano * 0.21]
+    df['impacto_abandono'] = np.select(condiciones, resultados, default=-999)
+    coste_total = df.loc[df.abandono == 1].impacto_abandono.sum()
 
-# ¿Hay un perfil de empleado que deja la empreza?
+    print("Reducir un 10% la fuga de empleados nos ahorra",
+          (coste_total * 0.1), "$ cada año")
+    print("Reducir un 20% la fuga de empleados nos ahorra",
+          (coste_total * 0.2), "$ cada año")
+    print("Reducir un 30% la fuga de empleados nos ahorra",
+          (coste_total * 0.3), "$ cada año")
+
+    return coste_total
+
+
+impacto_abandono_(df)
 
 
 clean_data(df)
-imputar(df)
-graficos_eda_categoricos(df.select_dtypes('O'))
 estadisticos_eda_cont(df.select_dtypes('number'))
+graficos_eda_categoricos(df.select_dtypes('O'))
+imputar(df)
 
 explorer_data_(df)

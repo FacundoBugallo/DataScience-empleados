@@ -130,12 +130,12 @@ temp = df.groupby('puesto').abandono.mean().sort_values(ascending=False) * 100
 temp.plot.bar()
 # el 40% de las SalesRepresentative abandono el oficio
 
-temp = df.groupby('abandono').salario_mes.mean()
+temp = df.groupby('abandono').salario_mes.mean(
+).sort_values(ascending=False)
 temp.plot.bar()
-
 # los empleados con sueldo menores tiende a salir de la empreza
 
-# Concluciones
+# Conclucioness
 # - El perfil del que deja la empresa
 # - Bajo nivel educativo
 # - Soltero
